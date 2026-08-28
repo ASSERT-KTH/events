@@ -4,9 +4,158 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agentic Anonymous 2026</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #12151c;
+    --text: #e8eaf0;
+    --muted: #9aa1b2;
+    --accent: #7c9eff;
+    --border: #232733;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+  h1 {
+    font-size: 2.4rem;
+    margin: 0.4rem 0 0.2rem;
+  }
+  .tagline {
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin: 0 0 2rem;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .meta span {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .meta .tentative {
+    color: var(--muted);
+    font-style: italic;
+  }
+  section {
+    margin-bottom: 2.5rem;
+  }
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+  ul {
+    padding-left: 1.2rem;
+  }
+  li {
+    margin-bottom: 0.5rem;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+  .card + .card {
+    margin-top: 1rem;
+  }
+  .card h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--muted);
+  }
+  .cta {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .cta a {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+  }
+  .cta a:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
-<h1>Agentic Anonymous 2026</h1>
-<p>Placeholder — details coming soon.</p>
+<div class="wrap">
+  <h1>Agentic Anonymous</h1>
+  <p class="tagline">A meetup for people addicted to coding agents.</p>
+
+  <div class="meta">
+    <span class="tentative">Sep 28, 2026 (tentative)</span>
+    <span>16:00 &ndash; 18:00</span>
+  </div>
+
+  <section>
+    <h2>What this is</h2>
+    <p>
+      We're gathering people who can't stop running coding agents &mdash; whether
+      that means building your own agent framework, running Claude Code /
+      Codex / Cursor / whatever all day, or just generally living inside
+      an agentic loop. Come talk shop, compare setups, and admit you have
+      a problem.
+    </p>
+  </section>
+
+  <section>
+    <h2>Call for talks</h2>
+    <p>We're looking for two kinds of talks:</p>
+    <div class="card">
+      <h3>Technical</h3>
+      <p>
+        Home&#8209;grown coding agent frameworks, the agents you're
+        operating day to day, tooling, workflows, war stories.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Psychological</h3>
+      <p>
+        Your addiction. How agents changed the way you think and work.
+        We'll also touch on AI psychosis.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Program</h2>
+    <div class="card">
+      <h3>Agentic Coding: The Good, the Bad, the Ugly</h3>
+      <p>Martin Monperrus</p>
+    </div>
+    <p>Beverages and mingle at the end.</p>
+  </section>
+
+  <div class="cta">
+    <p style="margin-bottom: 0.75rem; color: var(--muted);">Want to give a talk?</p>
+    <a href="mailto:monperrus@kth.se">monperrus@kth.se</a>
+  </div>
+</div>
 </body>
 </html>
