@@ -17,7 +17,7 @@
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: var(--bg);
+    background: transparent;
     color: var(--text);
     line-height: 1.6;
   }
@@ -25,6 +25,7 @@
     max-width: 720px;
     margin: 0 auto;
     padding: 3rem 1.5rem 5rem;
+    text-shadow: 0 1px 8px rgba(11, 13, 18, 0.9);
   }
   h1 {
     font-size: 2.4rem;
@@ -42,7 +43,8 @@
     margin-bottom: 2.5rem;
   }
   .meta span {
-    background: var(--panel);
+    background: rgba(18, 21, 28, 0.82);
+    backdrop-filter: blur(6px);
     border: 1px solid var(--border);
     border-radius: 999px;
     padding: 0.4rem 0.9rem;
@@ -69,7 +71,8 @@
     margin-bottom: 0.5rem;
   }
   .card {
-    background: var(--panel);
+    background: rgba(18, 21, 28, 0.82);
+    backdrop-filter: blur(6px);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.25rem 1.5rem;
@@ -86,7 +89,8 @@
     color: var(--muted);
   }
   .cta {
-    background: var(--panel);
+    background: rgba(18, 21, 28, 0.82);
+    backdrop-filter: blur(6px);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -101,9 +105,143 @@
   .cta a:hover {
     text-decoration: underline;
   }
+  #addiction-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    display: block;
+  }
 </style>
 </head>
 <body>
+<canvas id="addiction-bg"></canvas>
+<script>
+/* The spiral into the agentic loop — a psychedelic craving vortex.
+   It accelerates, pulses with craving, and periodically whispers
+   "one more prompt…". Yes, you have a problem. */
+(function () {
+  var canvas = document.getElementById('addiction-bg');
+  var gl = canvas.getContext('webgl');
+  if (!gl) { canvas.remove(); return; }
+
+  var VERT = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+
+  var FRAG = [
+    'precision highp float;',
+    'uniform float u_time;',
+    'uniform vec2 u_res;',
+    '',
+    'vec3 pal(float t) {',
+    '  return 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.0, 0.33, 0.67)));',
+    '}',
+    '',
+    'void main() {',
+    '  vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;',
+    '  float t = u_time;',
+    '  float r = length(uv);',
+    '  float a = atan(uv.y, uv.x);',
+    '',
+    '  // craving pulse: a heartbeat that never settles',
+    '  float craving = 1.0 + 0.25 * sin(t * 2.1);',
+    '',
+    '  // spiraling tunnel — the deeper you stare, the deeper you prompt',
+    '  float spiral = sin(a * 5.0 + r * 26.0 - t * 2.8 * craving);',
+    '  float tunnel  = 0.5 + 0.5 * sin(10.0 * log(r + 0.06) - t * 1.6);',
+    '',
+    '  // code-rain filaments dripping down the funnel',
+    '  float drip = smoothstep(0.75, 1.0, sin(uv.x * 60.0 + sin(uv.y * 8.0 + t) * 2.0 + t * 3.0));',
+    '',
+    '  float m = 0.5 + 0.5 * spiral;',
+    '  m *= 0.55 + 0.45 * tunnel;',
+    '',
+    '  vec3 col = pal(m * 0.9 + r * 1.4 - t * 0.12);',
+    '  col = mix(vec3(0.043, 0.051, 0.070), col, m * 0.75);',
+    '  col += pal(t * 0.23 + uv.x) * drip * 0.35 * m;',
+    '',
+    '  // the loop pulls you to the center',
+    '  col += pal(-t * 0.31) * 0.45 * pow(1.0 - smoothstep(0.0, 0.42, r), 3.0);',
+    '',
+    '  // vignette — there is no escape',
+    '  col *= smoothstep(1.35, 0.35, r);',
+    '',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+  ].join('\n');
+
+  function shader(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(s));
+      return null;
+    }
+    return s;
+  }
+
+  var vs = shader(gl.VERTEX_SHADER, VERT);
+  var fs = shader(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) { canvas.remove(); return; }
+
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(prog));
+    canvas.remove();
+    return;
+  }
+  gl.useProgram(prog);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'p');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  var uTime = gl.getUniformLocation(prog, 'u_time');
+  var uRes = gl.getUniformLocation(prog, 'u_res');
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var start = performance.now();
+  function frame(now) {
+    gl.uniform1f(uTime, (now - start) / 1000);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // the whisper of addiction
+  var whisper = document.createElement('div');
+  whisper.textContent = 'one more prompt\u2026';
+  whisper.style.cssText = [
+    'position:fixed', 'left:50%', 'top:78%', 'transform:translateX(-50%)',
+    'color:#b48cff', 'font-family:monospace', 'font-size:1.3rem',
+    'letter-spacing:0.25em', 'opacity:0', 'pointer-events:none',
+    'text-shadow:0 0 12px #7c9eff', 'transition:opacity 2.5s ease',
+    'z-index:10'
+  ].join(';');
+  document.body.appendChild(whisper);
+  (function cycle() {
+    whisper.style.opacity = '0.85';
+    setTimeout(function () { whisper.style.opacity = '0'; }, 4500);
+    setTimeout(cycle, 12000);
+  })();
+})();
+</script>
 <div class="wrap">
   <h1>Agentic Anonymous</h1>
   <p class="tagline">A meetup for people addicted to coding agents.</p>
