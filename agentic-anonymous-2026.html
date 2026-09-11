@@ -88,6 +88,33 @@
     margin: 0;
     color: var(--muted);
   }
+  .card details {
+    margin-top: 0.6rem;
+  }
+  .card details summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 0.9rem;
+    list-style: none;
+  }
+  .card details summary::-webkit-details-marker { display: none; }
+  .card details summary::before {
+    content: "\25B8\00a0";
+    display: inline-block;
+    transition: transform 0.15s ease;
+  }
+  .card details[open] summary::before {
+    content: "\25BE\00a0";
+  }
+  .card details p {
+    margin-top: 0.6rem;
+  }
+  .card details p + p {
+    margin-top: 0.6rem;
+  }
+  .card:target {
+    border-color: var(--accent);
+  }
   .cta {
     background: rgba(18, 21, 28, 0.82);
     backdrop-filter: blur(6px);
@@ -291,6 +318,37 @@
       <h3>Coding Agents Concept Cars</h3>
       <p>Martin Monperrus</p>
     </div>
+    <div class="card" id="waiting-for-the-agent">
+      <h3>Waiting for the agent</h3>
+      <p>Paula</p>
+      <details>
+        <summary>Abstract</summary>
+        <p>
+          I run several agents at once, all day, and I have started to pay
+          attention to what I actually do in the gap while they do their work.
+          It turns out to be a specific kind of gap: too short to leave, too
+          indeterminate to plan for. So I fill it with something abandonable
+          &mdash; usually another agent, which produces another wait. This ends
+          up with me being the bottleneck in a queue of activities I impose upon
+          myself, each one having its own time horizon stretching ahead.
+        </p>
+        <p>
+          I'll compare the agents to a process I understand well &mdash;
+          sourdough fermentation, where I can set an alarm and really focus on
+          something else &mdash; to argue that what makes a wait leavable isn't
+          transparency, but having a model good enough to enable one to &ldquo;leave
+          the room&rdquo;. I can watch every tool call an agent makes and still not
+          know when it will stop; I do not see yeast yet I know how long they
+          will work for.
+        </p>
+        <p>
+          I'll close on Taylor and his scientific management theory, which
+          prescribed workers' rest as carefully as it prescribed their work,
+          provided management decided both. Nobody manages my idle seconds; I do
+          it myself, and I'm worse at it than Taylor.
+        </p>
+      </details>
+    </div>
     <div class="card">
       <h3>Mental models and coding agents</h3>
       <p>Ric Glassey</p>
@@ -305,6 +363,35 @@
     </div>
     <p>Beverages and mingle at the end.</p>
   </section>
+
+  <script>
+  /* Shareable abstracts: #<talk-id> opens the abstract and scrolls to it;
+     toggling an abstract updates the URL so it can be copied and shared. */
+  (function () {
+    function openFromHash() {
+      var id = location.hash.slice(1);
+      if (!id) return;
+      var card = document.getElementById(id);
+      if (!card) return;
+      var d = card.querySelector('details');
+      if (d) d.open = true;
+      card.scrollIntoView({ block: 'center' });
+    }
+    window.addEventListener('hashchange', openFromHash);
+    openFromHash();
+
+    document.querySelectorAll('.card[id] > details').forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        var id = d.parentNode.id;
+        if (d.open) {
+          history.replaceState(null, '', '#' + id);
+        } else if (location.hash === '#' + id) {
+          history.replaceState(null, '', location.pathname + location.search);
+        }
+      });
+    });
+  })();
+  </script>
 
   <div class="cta">
     <p style="margin-bottom: 0.75rem; color: var(--muted);">Want to give a talk?</p>
